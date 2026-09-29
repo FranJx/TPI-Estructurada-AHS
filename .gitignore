@@ -1,0 +1,21 @@
+# Compilados y ejecutables
+*.exe
+*.o
+*.obj
+*.out
+*.app
+
+# Archivos de depuración y temporales
+*.pdb
+*.ilk
+*.bak
+*.tmp
+*.log
+
+# IDEs y editores
+.vscode/
+.idea/
+*.layout
+*.depend
+*.dev
+*.cbp.mak
