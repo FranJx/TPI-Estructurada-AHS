@@ -19,3 +19,8 @@
 *.depend
 *.dev
 *.cbp.mak
+
+# Archivos de datos y reportes generados
+*.dat
+reporte_*.txt
+Makefile.win

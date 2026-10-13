@@ -7,12 +7,11 @@
 ---
 
 ## 👥 Integrantes
-- Eckert K.
-- Arias F.
-- Barros G.
-- Rodoni L.
+- Aguirre Franco
+- Hereñu Thiago
+- Senio Remo
+- Vasquez Julio
 
-*(Revisar / actualizar con Nombre, Apellido y DNI si corresponde)*
 
 ---
 
@@ -29,13 +28,3 @@ Aplicación de consola desarrollada en lenguaje C utilizando programación estru
 - `movimientos.h` / `movimientos.c`: Registro de pagos, ajustes y archivo de texto por cliente.
 
 ---
-
-## 🛠️ Compilación y Ejecución
-Para compilar todos los módulos con GCC:
-```bash
-gcc -Wall -Wextra -std=c99 main.c clientes.c vehiculos.c alquileres.c movimientos.c -o sistema_alquiler.exe
-```
-Para ejecutar:
-```bash
-./sistema_alquiler.exe
-```
