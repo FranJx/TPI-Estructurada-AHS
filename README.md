@@ -12,7 +12,6 @@
 - Senio Remo
 - Vasquez Julio
 
-
 ---
 
 ## 📋 Descripción del Proyecto
