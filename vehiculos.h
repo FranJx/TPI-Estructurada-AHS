@@ -13,5 +13,6 @@ int modificarVehiculo(char *patente, char *marca, char *modelo, int anio, int ti
 int eliminarVehiculo(char *patente);
 void listarVehiculos(void);
 int exportarVehiculosTxt(void);
+int estaDisponible(char *patente);
 
 #endif // VEHICULOS_H

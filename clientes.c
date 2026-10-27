@@ -126,7 +126,29 @@ int modificarCliente(int DNI, char *nombre, char *apellido, char *direccion, cha
     return 1;
 }
 int eliminarCliente(int DNI) {
-    return 1;
+    FILE *arch_clientes;
+	int encontrado=0;
+	struct cliente c;
+	arch_clientes= fopen("clientes.dat", "r+b");
+	if(arch_clientes != NULL){
+		while((fread(&c, sizeof(struct cliente), 1, arch_clientes)) == 1){
+			if(c.DNI == DNI){
+				encontrado= 1;
+				c.activo = 0;
+				fseek(arch_clientes, -sizeof(struct cliente), SEEK_CUR);
+				fwrite(&c, sizeof(struct cliente), 1, arch_clientes);
+				printf("\nCliente eliminado exitosamente\n");
+				fclose(arch_clientes);
+			}
+		}
+		if(encontrado != 1){
+			printf("\nCliente no encontrado\n");
+		}
+	}else{
+		printf("\nERROR DE APERTURA DE ARCHIVO DE CLIENTES\n");
+	}
+	fclose(arch_clientes);
+	return 0;
 }
 
 static void imprimirSeparadorClientes(FILE *stream) {

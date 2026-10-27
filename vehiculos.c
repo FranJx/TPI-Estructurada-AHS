@@ -174,7 +174,48 @@ int modificarVehiculo(char *patente, char *marca, char *modelo, int anio, int ti
 }
 
 int eliminarVehiculo(char *patente) {
+	FILE *arch_vehiculos;
+	struct vehiculo v;
+	int encontrado= 0;
+	arch_vehiculos = fopen("vehiculos.dat", "r+b");
+	if(arch_vehiculos != NULL){
+		while((fread(&v, sizeof(struct vehiculo), 1, arch_vehiculos)) == 1){
+			if(v.patVehiculo == patente){
+				encontrado = 1;
+				v.estado = 0;
+				fseek(arch_vehiculos, -sizeof(struct vehiculo), SEEK_CUR);
+				fwrite(&v, sizeof(struct vehiculo), 1, arch_vehiculos);
+				printf("\nVehiculo eliminado con exito\n");
+				fclose(arch_vehiculos);
+			}
+		}
+		if(encontrado != 1){
+			printf("\nError, vehiculo no encontrado\n");
+		}
+	}else{
+		printf("\nError en la apertura del archivo de vehiculos\n");
+	}
+	fclose(arch_vehiculos);
     return 1;
+}
+int estaDisponible(char *patent){
+	FILE *arch_vehiculos;
+	struct vehiculo v;
+	arch_vehiculos= fopen("vehiculos.dat", "rb");
+	if(arch_vehiculos != NULL){
+		while((fread(&v, sizeof(struct vehiculo), 1, arch_vehiculos)) == 1){
+			if(strcmp(v.patVehiculo, patent)== 0){
+				if(v.estado == 1){
+					fclose(arch_vehiculos);
+					return 1;//si el vehiculo esta disponible para alquilarse
+				}
+			}
+		}
+	}else{
+		printf("\nError de apertura del archivo de vehiculos\n");
+	}
+	fclose(arch_vehiculos);
+	return 0; //si el vehiculo no esta disponible para alquiler
 }
 
 static const char* textoTipoVehiculo(int tipo) {

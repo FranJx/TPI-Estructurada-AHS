@@ -5,6 +5,7 @@
 #include "Estructuras.h"
 #include "clientes.h"
 #include "vehiculos.h"
+#include "alquileres.h"
 
 int main(void) {
 	char patente[8];
@@ -197,9 +198,21 @@ int main(void) {
 						}
 						break;
 					}
-					case 4: //Eliminar cliente
-						
+					case 4: { //Eliminar cliente
+						int DNI;
+						printf("\nIngrese el DNI del cliente al que desea eliminar: \t");
+						if (scanf("%d", &DNI) != 1) {
+							printf("\nError: Debe ingresar un numero entero para el DNI.\n\n");
+							while (getchar() != '\n');
+							break;
+						}
+						if (!esDNI(DNI)) {
+							printf("\nError: DNI invalido (debe tener entre 7 y 8 digitos numericos).\n\n");
+							break;
+						}
+						eliminarCliente(DNI);
 						break;
+					}
 					case 5: { //Listar clientes
 						listarClientes();
 						break;
@@ -373,8 +386,13 @@ int main(void) {
 						}
 						break;
 					}
-					case 4: //Eliminar vehiculo
+					case 4: {//Eliminar vehiculo
+						char pat[10];
+						printf("\nIngrese la patente del vehiculo que desea eliminar: \t");
+						scanf("%s", pat);
+						eliminarVehiculo(pat);
 						break;
+					}
 					case 5: { //Listar vehiculos
 						listarVehiculos();
 						break;
@@ -386,9 +404,184 @@ int main(void) {
 						opcion = 2;
 				}
 				break;
-			case 3: //Alquileres
-				
+			case 3: {//alquileres
+				int quehacer;
+				char quehacer2;
+				printf("\n¿Que desea hacer?\n1_Registrar alquiler\n2_Modificar alquiler\n");
+				scanf("%d", &quehacer);
+				switch(quehacer){
+					case 1: {// se registra un alquiler
+						int numal, dnicli,days, state;
+						char patent[10];
+						float costot, costpag;
+						struct fechas feini;
+						struct fechas fepre;
+						struct fechas fereal;
+						printf("\nIngrese numero de alquiler: \t");
+						scanf("%d", &numal);
+						if((existeAlquiler (numal)) == 1){
+							printf("\nNo se puede ingresar un numero de alquiler duplicado\n");
+							break;
+						}
+						printf("\nIngrese el DNI del cliente que va a realizar el alquiler: \t");
+						scanf("%d", &dnicli);
+						if((existeCliente(dnicli)) != 1){//se verifica que el cliente exista
+							printf("\nEl cliente no existe\n");
+							break;
+						}
+						printf("\nIngrese la patente del vehiculo que se desea alquilar: \t");
+						scanf("%s", patent);
+						if(existeVeh(patent) != 1){//se verifica que el vehiculo que se quiere alquilar exista
+							printf("\nEl vehiculo que se desea alquilar no existe\n");
+							break;
+						}
+						if(estaDisponible(patent) != 1){
+							printf("\nEl vehiculo que se desea alquilar no esta disponible\n");
+							break;
+						}
+						printf("\nIngrese la fecha inicial del alquiler(separada por espacios y en formato numerico): \t");
+						scanf("%d %d %d", &feini.dia, &feini.mes, &feini.anio);
+						printf("\nIngrese la fecha prevista de devolucion del vehiculo: \t");
+						scanf("%d %d %d", &fepre.dia, &fepre.mes, &fepre.anio);
+						printf("\nIngrese fecha de devolucion real: \t");
+						scanf("%d %d %d", &fereal.dia, &fereal.mes, &fereal.anio);
+						printf("\nIngrese los dias que durara el alquiler: \t");
+						scanf("%d", &days);
+						calcularCostoTot(patent, &costot, days);
+						printf("\nIngrese la cantidad que pago el cliente: \t");
+						scanf("%f", &costpag);
+						state= 1;
+						printf("\n----------Resumen del alquiler----------\n");
+						printf("\nNumero de alquiler:        %d\n", numal);
+						printf("\nDNI del cliente:           %d\n", dnicli);
+						printf("\nPatente del vehiculo:      %s\n", patent);
+						printf("\nFecha inicial:             %d %d %d\n", feini.dia, feini.mes, feini.anio);
+						printf("\nFecha prevista de devolucion:  %d %d %d\n", fepre.dia, fepre.mes, fepre.anio);
+						printf("\nFecha de devolucion real:  %d %d %d\n", fereal.dia, fereal.mes, fereal.anio);
+						printf("\nDuracion:                  %d dias\n", days);
+						printf("\nCosto total:               %f $\n", costot);
+						printf("\nCosto pagado:              %f\n", costpag);
+						printf("\nEstado:                    %d\n", state);
+						printf("\n----------------------------------------\n");
+						printf("\n¿Desea confimar el registro del alquiler? (Y/N)\n");
+						scanf("%s", &quehacer2);
+						if((quehacer2 == 'y') || (quehacer2 == 'Y') || (quehacer2 == 's') || (quehacer2 == 'S')){
+							registrarAlquiler(numal, dnicli, patent, feini, fepre, fereal, days, costot, costpag, state);
+							
+						}else{
+							printf("\nOperacion cancelada por el usuario\n");
+						}
+						break;
+					case 2:{
+						//se modifica un alquiler
+						int opermod, numalquiler;
+						struct alquileres al;
+						printf("\nIngrese el numero del alquiler que se desea modificar: \t");
+						scanf("%d", &numalquiler);
+						if(existeAlquiler(numalquiler) != 1){
+							printf("\nEl numero de alquiler ingresado no existe\n");
+							break;
+						}
+						obtenerAlquiler(numalquiler, &al);
+						printf("\n----------Datos actuales del alquiler----------\n");
+						printf("\nNumero del alquiler:         %d\n", al.numAlq);
+						printf("\nDNI del cliente:             %d\n", al.dniCliente);
+						printf("\nPatente del vehiculo:        %s\n", al.patVehiculo);
+						printf("\nFecha de inicio:             %d %d %d\n", al.fechaInicio.dia, al.fechaInicio.mes, al.fechaInicio.anio);
+						printf("\nFecha prevista de devolcucion:     %d %d %d\n", al.fechaPreDevolucion.dia, al.fechaPreDevolucion.mes, al.fechaPreDevolucion.anio);
+						printf("\nFecha real de devolucion:    %d %d %d\n", al.fechaRealDevolucion.dia, al.fechaRealDevolucion.mes, al.fechaRealDevolucion.anio);
+						printf("\nDuracion del alquiler:       %d dias\n", al.dias);
+						printf("\nCosto total del alquiler:    %f $\n", al.costoTotal);
+						printf("\nCosto pagado:                %f $\n", al.totalPagado);
+						printf("\nEstado:                      %d\n", al.estado);
+						printf("\n-----------------------------------------------\n");
+						printf("\n1_DNI del cliente\n2_Patente del vehiculo\n3_Fecha de inicio\n4_Fecha prevista de devolucion\n5_Fecha real de devolucion\n6_Duracion del alquiler\n7_Costo pagado\n8_Estado\n9_Todo\n0_Cancelar modificacion\n");
+						scanf("%d", &opermod);
+						if(opermod == 0){
+							printf("\nOperacion cancelada por el usuario\n");
+							break;
+						}
+						if((opermod == 1) || (opermod == 9)){
+							printf("\nIngrese DNI del cliente: \t");
+							scanf("%d", &al.dniCliente);
+							int DNI= al.dniCliente;
+							if((existeCliente(DNI)) != 1){// se verifica que el dni del cliente exista
+								printf("\nEl cliente no existe\n");
+								break;
+							}
+						}
+						if((opermod == 2) || (opermod == 9)){
+							printf("\nIngrese la patente del vehiculo: \t");
+							scanf("%s", al.patVehiculo);
+							char patent[10];
+							strcpy(patent, al.patVehiculo);
+							if((existeVeh(patent)) != 1){// se verfica que la patente del vehiculo exista
+								printf("\nEl vehiculo no existe\n");
+								break;
+							}
+							if((estaDisponible(patent)) != 1){
+								printf("\nEl vehiculo no esta disponible\n");
+								break;
+							}
+						}
+						if((opermod == 3) || (opermod == 9)){
+							printf("\nIngrese fecha de inicio del alquiler (en formato numerico y separada por espacios): \t");
+							scanf("%d %d %d", &al.fechaInicio.dia, &al.fechaInicio.mes, &al.fechaInicio.anio);
+						}
+						if((opermod == 4) || (opermod == 9)){
+							printf("\nIngrese la fecha prevista de devolucion (en formato numerico y separada por espacios): \t");
+							scanf("%d %d %d", &al.fechaPreDevolucion.dia, &al.fechaPreDevolucion.mes, &al.fechaPreDevolucion.anio);
+						}
+						if((opermod == 5) || (opermod == 9)){
+							printf("\nIngrese la fecha de devolucion real (en formato numerico y separada por espacios): \t");
+							scanf("%d %d %d", &al.fechaRealDevolucion.dia, &al.fechaRealDevolucion.mes, &al.fechaRealDevolucion.anio);
+						}
+						if((opermod == 6) || (opermod == 9)){
+							printf("\nIngrese la duracion del alquiler: \t");
+							scanf("%d", &al.dias);
+						}
+						if((opermod == 7) || (opermod == 9)){
+							printf("\nIngrese el costo pagado: \t");
+							scanf("%f", &al.totalPagado);
+						}
+						if((opermod == 8) || (opermod == 9)){
+							printf("\nIngrese el estado: \t");
+							scanf("%d", &al.estado);
+						}
+						printf("\n-----------------------------------------------\n");
+						printf("\n----------Resumen con nuevos datos-------------\n");
+						printf("\nNumero de alquiler:               %d\n", al.numAlq);
+						printf("\nDNI del cliente:                  %d\n", al.dniCliente);
+						printf("\nPatente del vehiculo:             %s\n", al.patVehiculo);
+						printf("\nFecha de inicio del alquiler:     %d %d %d\n", al.fechaInicio.dia, al.fechaInicio.mes, al.fechaInicio.anio);
+						printf("\nFecha de devolucion prevista:     %d %d %d\n", al.fechaPreDevolucion.dia, al.fechaPreDevolucion.mes, al.fechaPreDevolucion.anio);
+						printf("\nFecha de devolucion real:         %d %d %d\n", al.fechaRealDevolucion.dia, al.fechaRealDevolucion.mes, al.fechaRealDevolucion.anio);
+						printf("\nDuracion del alquiler:            %d dias\n", al.dias);
+						int d= al.dias;
+						char p[10];
+						float costototl;
+						strcpy(p, al.patVehiculo);
+						calcularCostoTot(p, &costototl, d);//se calcula el costo total nuevo
+						al.costoTotal = costototl;
+						printf("\nCosto total:                      %f $\n", al.costoTotal);
+						printf("\nCosto pagado:                     %f $\n", al.totalPagado);
+						printf("\nEstado:                           %d\n", al.estado);
+						printf("\n-----------------------------------------------\n");
+						char decision;
+						printf("\n¿Desea confirmar la modificacion? (Y/N):      \t");
+						scanf(" %c", &decision);
+						if((decision == 'Y') || (decision == 'y') || (decision == 'S') || (decision == 's')){
+							modificarAlquiler(al.numAlq, al.dniCliente, al.patVehiculo, al.fechaInicio, al.fechaPreDevolucion, al.fechaRealDevolucion, al.dias, al.costoTotal, al.totalPagado, al.estado);
+						}else{
+							printf("\nModificacion cancelada por el usuario\n");
+							break;
+						}
+						break;
+					}
 				break;
+				}
+			}
+			}
 			case 4: //Devoluciones
 				
 				break;
