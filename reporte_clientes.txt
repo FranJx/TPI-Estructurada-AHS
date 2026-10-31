@@ -1,0 +1,22 @@
+========================================================================================================================
+                                               REPORTE GENERAL DE CLIENTES                                              
+========================================================================================================================
+
++-----------+---------------+---------------+--------------+----------------------+--------------------+------------+----------+
+| DNI       | Nombre        | Apellido      | Telefono     | Email                | Direccion          | F. Alta    | Estado   |
++-----------+---------------+---------------+--------------+----------------------+--------------------+------------+----------+
+|  38123456 | Juan          | Perez         |   3764123456 | juan.perez@email.com | Av. Corrientes 145 | 15/01/2024 | Activo   |
+|  40987654 | Maria         | Gomez         |   3764987654 | maria.gomez@email.co | Calle San Martin 8 | 20/02/2024 | Activo   |
+|  35444333 | Carlos        | Rodriguez     |   3764443332 | carlos.rod@email.com | Av. Mitre 2100, Po | 10/03/2024 | Activo   |
+|  42555666 | Lucia         | Fernandez     |   3764555666 | lucia.f@email.com    | Belgrano 450, Cand | 05/04/2024 | Activo   |
+|  39888777 | Martin        | Benitez       |   3764888777 | martin.b@email.com   | Av. Uruguay 3200,  | 12/05/2024 | Activo   |
+|  41222333 | Sofia         | Martinez      |   3758222333 | sofia.m@email.com    | Rivadavia 780, Apo | 18/06/2024 | Activo   |
+|  37666999 | Roberto       | Sanchez       |   3764666999 | roberto.s@email.com  | Av. Lavalle 1900,  | 22/07/2024 | Activo   |
+|  43111222 | Camila        | Lopez         |   3755111222 | camila.l@email.com   | Sarmiento 120, Obe | 30/07/2024 | Activo   |
+|  36555444 | Diego         | Romero        |   3764555444 | diego.romero@email.c | Av. Tambor de Tacu | 14/08/2024 | Activo   |
+|  44333222 | Valentina     | Acosta        |   3764333222 | valen.acosta@email.c | Junin 1600, Posada | 03/09/2024 | Activo   |
+|  33888999 | Fernando      | Silva         |   3764888999 | f.silva@email.com    | Av. Rademacher 280 | 11/09/2024 | Activo   |
+|  39111444 | Patricia      | Morales       |   3751111444 | patricia.m@email.com | Av. San Martin 500 | 02/02/2024 | Inactivo |
++-----------+---------------+---------------+--------------+----------------------+--------------------+------------+----------+
+
+Total de clientes registrados: 12

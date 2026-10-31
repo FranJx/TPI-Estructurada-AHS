@@ -1,0 +1,4 @@
+10/01/2026 | Mov #1    | Alq #1    | Tipo: PAGO    | Patente: AE123AB | Monto: $100000.00
+15/01/2026 | Mov #2    | Alq #1    | Tipo: PAGO    | Patente: AE123AB | Monto: $125000.00
+28/10/2026 | Mov #15   | Alq #12   | Tipo: PAGO    | Patente: AE123AB | Monto: $100000.00
+15/06/2026 | Mov #18   | Alq #16   | Tipo: PAGO    | Patente: AF456CD | Monto: $ 50000.00

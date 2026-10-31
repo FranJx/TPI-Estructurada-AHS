@@ -1,0 +1,1 @@
+10/05/2026 | Mov #12   | Alq #10   | Tipo: PAGO    | Patente: AE123AB | Monto: $135000.00

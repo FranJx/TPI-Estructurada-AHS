@@ -1,0 +1,22 @@
+=================================================================================================================
+                                         REPORTE GENERAL DE VEHICULOS                                            
+=================================================================================================================
+
++---------+---------------+---------------+------+-------------+------+------------+---------+---------------+
+| Patente | Marca         | Modelo        | Anio | Tipo        | Cap. | Precio/Dia | Km Act. | Estado        |
++---------+---------------+---------------+------+-------------+------+------------+---------+---------------+
+| AE123AB | Toyota        | Corolla       | 2022 | Auto        |  5 p | $ 45000.00 |   35400 | Alquilado     |
+| AF456CD | Volkswagen    | Gol Trend     | 2021 | Auto        |  5 p | $ 32000.00 |   48200 | Disponible    |
+| AG789EF | Ford          | Ranger 4x4    | 2023 | Utilitario  |  5 p | $ 75000.00 |   28100 | Alquilado     |
+| AA111BB | Chevrolet     | Onix          | 2020 | Auto        |  5 p | $ 30000.00 |   62500 | Disponible    |
+| AB222CC | Fiat          | Cronos        | 2023 | Auto        |  5 p | $ 38000.00 |   19300 | Alquilado     |
+| AC333DD | Renault       | Duster        | 2022 | Camioneta   |  5 p | $ 52000.00 |   41000 | Disponible    |
+| AD444EE | Peugeot       | 208           | 2023 | Auto        |  5 p | $ 36000.00 |   15800 | Alquilado     |
+| AH555FF | Jeep          | Renegade      | 2022 | Camioneta   |  5 p | $ 60000.00 |   33200 | Disponible    |
+| AJ666GG | Nissan        | Frontier      | 2021 | Utilitario  |  5 p | $ 72000.00 |   55400 | Mantenimiento |
+| AK777HH | Toyota        | Hilux SRX     | 2024 | Utilitario  |  5 p | $ 85000.00 |    8900 | Disponible    |
+| AL888II | Volkswagen    | Taos          | 2023 | Camioneta   |  5 p | $ 68000.00 |   22100 | Disponible    |
+| AM999JJ | Ford          | Ka            | 2018 | Auto        |  4 p | $ 25000.00 |  115000 | Baja          |
++---------+---------------+---------------+------+-------------+------+------------+---------+---------------+
+
+Total de vehiculos registrados: 12

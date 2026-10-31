@@ -1,0 +1,2 @@
+05/04/2026 | Mov #9    | Alq #7    | Tipo: PAGO    | Patente: AA111BB | Monto: $100000.00
+12/04/2026 | Mov #10   | Alq #7    | Tipo: PAGO    | Patente: AA111BB | Monto: $110000.00

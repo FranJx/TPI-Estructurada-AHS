@@ -1,0 +1,2 @@
+05/02/2026 | Mov #3    | Alq #2    | Tipo: PAGO    | Patente: AG789EF | Monto: $300000.00
+25/10/2026 | Mov #16   | Alq #13   | Tipo: PAGO    | Patente: AG789EF | Monto: $450000.00

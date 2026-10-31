@@ -1,0 +1,1 @@
+10/03/2026 | Mov #7    | Alq #5    | Tipo: PAGO    | Patente: AD444EE | Monto: $150000.00

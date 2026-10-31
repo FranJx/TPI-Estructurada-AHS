@@ -1,0 +1,1 @@
+18/04/2026 | Mov #11   | Alq #8    | Tipo: PAGO    | Patente: AH555FF | Monto: $120000.00

@@ -1,0 +1,4 @@
+01/03/2026 | Mov #4    | Alq #4    | Tipo: PAGO    | Patente: AB222CC | Monto: $114000.00
+06/03/2026 | Mov #5    | Alq #4    | Tipo: AJUSTE  | Patente: AB222CC | Monto: $ 76000.00
+06/03/2026 | Mov #6    | Alq #4    | Tipo: PAGO    | Patente: AB222CC | Monto: $ 76000.00
+29/10/2026 | Mov #17   | Alq #14   | Tipo: PAGO    | Patente: AB222CC | Monto: $ 50000.00
