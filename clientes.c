@@ -126,29 +126,25 @@ int modificarCliente(int DNI, char *nombre, char *apellido, char *direccion, cha
     return 1;
 }
 int eliminarCliente(int DNI) {
-    FILE *arch_clientes;
-	int encontrado=0;
-	struct cliente c;
-	arch_clientes= fopen("clientes.dat", "r+b");
-	if(arch_clientes != NULL){
-		while((fread(&c, sizeof(struct cliente), 1, arch_clientes)) == 1){
-			if(c.DNI == DNI){
-				encontrado= 1;
-				c.activo = 0;
-				fseek(arch_clientes, -sizeof(struct cliente), SEEK_CUR);
-				fwrite(&c, sizeof(struct cliente), 1, arch_clientes);
-				printf("\nCliente eliminado exitosamente\n");
-				fclose(arch_clientes);
-			}
-		}
-		if(encontrado != 1){
-			printf("\nCliente no encontrado\n");
-		}
-	}else{
-		printf("\nERROR DE APERTURA DE ARCHIVO DE CLIENTES\n");
+	FILE *arch_clientes = fopen("clientes.dat", "r+b");
+	if (arch_clientes == NULL) {
+		printf("\nError al abrir clientes.dat\n");
+		return 1;
 	}
+
+	struct cliente c;
+	while (fread(&c, sizeof(struct cliente), 1, arch_clientes) == 1) {
+		if (c.DNI == DNI) {
+			c.activo = 0; // Baja logica
+			fseek(arch_clientes, -(long)sizeof(struct cliente), SEEK_CUR);
+			fwrite(&c, sizeof(struct cliente), 1, arch_clientes);
+			fclose(arch_clientes);
+			return 0; // Exito
+		}
+	}
+
 	fclose(arch_clientes);
-	return 0;
+	return 1; // No encontrado
 }
 
 static void imprimirSeparadorClientes(FILE *stream) {

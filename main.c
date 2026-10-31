@@ -6,9 +6,9 @@
 #include "clientes.h"
 #include "vehiculos.h"
 #include "alquileres.h"
+#include "movimientos.h"
 
 int main(void) {
-	char patente[8];
 	int opcion = -1;
 	
     
@@ -404,74 +404,140 @@ int main(void) {
 						opcion = 2;
 				}
 				break;
-			case 3: {//alquileres
-				int quehacer;
+			case 3: { // Gestion de Alquileres
+				int quehacer = 0;
 				char quehacer2;
-				printf("\n¿Que desea hacer?\n1_Registrar alquiler\n2_Modificar alquiler\n");
-				scanf("%d", &quehacer);
-				switch(quehacer){
-					case 1: {// se registra un alquiler
-						int numal, dnicli,days, state;
+				printf("\n================ GESTION DE ALQUILERES ================\n");
+				printf("1. Registrar alquiler\n");
+				printf("2. Modificar alquiler\n");
+				printf("3. Listar alquileres\n");
+				printf("0. Volver\n");
+				printf("Seleccione una opcion: ");
+				if (scanf("%d", &quehacer) != 1 || quehacer == 0) {
+					while (getchar() != '\n');
+					break;
+				}
+
+				switch (quehacer) {
+					case 1: { // Registrar nuevo alquiler
+						int numal = obtenerSiguienteNumAlquiler();
+						printf("\n================ REGISTRAR ALQUILER ================\n");
+						printf("Numero de alquiler asignado: %d (Automatico)\n\n", numal);
+
+						// 1. Validar Cliente
+						int dnicli;
+						printf("Ingrese el DNI del cliente: ");
+						if (scanf("%d", &dnicli) != 1) {
+							printf("\nError: Debe ingresar un numero entero para el DNI.\n\n");
+							while (getchar() != '\n');
+							break;
+						}
+						if (!esDNI(dnicli)) {
+							printf("\nError: DNI invalido (debe tener entre 7 y 8 digitos numericos).\n\n");
+							break;
+						}
+						if (!existeCliente(dnicli)) {
+							printf("\nError: El cliente con DNI %d no existe en el sistema.\n\n", dnicli);
+							break;
+						}
+						struct cliente cCli;
+						obtenerCliente(dnicli, &cCli);
+						if (cCli.activo != 1) {
+							printf("\nError: El cliente %s %s se encuentra inactivo/dado de baja.\n\n", cCli.nombre, cCli.apellido);
+							break;
+						}
+						printf("Cliente seleccionado: %s %s (DNI: %d)\n\n", cCli.nombre, cCli.apellido, dnicli);
+
+						// 2. Validar Vehiculo
 						char patent[10];
-						float costot, costpag;
-						struct fechas feini;
-						struct fechas fepre;
-						struct fechas fereal;
-						printf("\nIngrese numero de alquiler: \t");
-						scanf("%d", &numal);
-						if((existeAlquiler (numal)) == 1){
-							printf("\nNo se puede ingresar un numero de alquiler duplicado\n");
+						printf("Ingrese la patente del vehiculo a alquilar: ");
+						scanf(" %s", patent);
+						if (!esPatente(patent)) {
+							printf("\nError: Formato de patente invalido (debe ser AAA999 o AA999AA).\n\n");
 							break;
 						}
-						printf("\nIngrese el DNI del cliente que va a realizar el alquiler: \t");
-						scanf("%d", &dnicli);
-						if((existeCliente(dnicli)) != 1){//se verifica que el cliente exista
-							printf("\nEl cliente no existe\n");
+						if (!existeVeh(patent)) {
+							printf("\nError: El vehiculo con patente %s no existe en el sistema.\n\n", patent);
 							break;
 						}
-						printf("\nIngrese la patente del vehiculo que se desea alquilar: \t");
-						scanf("%s", patent);
-						if(existeVeh(patent) != 1){//se verifica que el vehiculo que se quiere alquilar exista
-							printf("\nEl vehiculo que se desea alquilar no existe\n");
+						if (!estaDisponible(patent)) {
+							printf("\nError: El vehiculo con patente %s no esta disponible para alquilar.\n\n", patent);
 							break;
 						}
-						if(estaDisponible(patent) != 1){
-							printf("\nEl vehiculo que se desea alquilar no esta disponible\n");
+						struct vehiculo vVeh;
+						obtenerVehiculo(patent, &vVeh);
+						printf("Vehiculo seleccionado: %s %s (Patente: %s) - Tarifa: $%.2f/dia\n\n",
+						       vVeh.marca, vVeh.modelo, patent, vVeh.precioPorDia);
+
+						// 3. Validar Fechas y calcular duracion en dias de forma automatica
+						struct fechas feini, fepre;
+						printf("Ingrese la fecha inicial del alquiler (dia mes anio separados por espacio): ");
+						if (scanf("%d %d %d", &feini.dia, &feini.mes, &feini.anio) != 3 || !esFechaValida(feini)) {
+							printf("\nError: Fecha inicial invalida.\n\n");
+							while (getchar() != '\n');
 							break;
 						}
-						printf("\nIngrese la fecha inicial del alquiler(separada por espacios y en formato numerico): \t");
-						scanf("%d %d %d", &feini.dia, &feini.mes, &feini.anio);
-						printf("\nIngrese la fecha prevista de devolucion del vehiculo: \t");
-						scanf("%d %d %d", &fepre.dia, &fepre.mes, &fepre.anio);
-						printf("\nIngrese fecha de devolucion real: \t");
-						scanf("%d %d %d", &fereal.dia, &fereal.mes, &fereal.anio);
-						printf("\nIngrese los dias que durara el alquiler: \t");
-						scanf("%d", &days);
-						calcularCostoTot(patent, &costot, days);
-						printf("\nIngrese la cantidad que pago el cliente: \t");
-						scanf("%f", &costpag);
-						state= 1;
-						printf("\n----------Resumen del alquiler----------\n");
-						printf("\nNumero de alquiler:        %d\n", numal);
-						printf("\nDNI del cliente:           %d\n", dnicli);
-						printf("\nPatente del vehiculo:      %s\n", patent);
-						printf("\nFecha inicial:             %d %d %d\n", feini.dia, feini.mes, feini.anio);
-						printf("\nFecha prevista de devolucion:  %d %d %d\n", fepre.dia, fepre.mes, fepre.anio);
-						printf("\nFecha de devolucion real:  %d %d %d\n", fereal.dia, fereal.mes, fereal.anio);
-						printf("\nDuracion:                  %d dias\n", days);
-						printf("\nCosto total:               %f $\n", costot);
-						printf("\nCosto pagado:              %f\n", costpag);
-						printf("\nEstado:                    %d\n", state);
-						printf("\n----------------------------------------\n");
-						printf("\n¿Desea confimar el registro del alquiler? (Y/N)\n");
-						scanf("%s", &quehacer2);
-						if((quehacer2 == 'y') || (quehacer2 == 'Y') || (quehacer2 == 's') || (quehacer2 == 'S')){
+						printf("Ingrese la fecha prevista de devolucion (dia mes anio separados por espacio): ");
+						if (scanf("%d %d %d", &fepre.dia, &fepre.mes, &fepre.anio) != 3 || !esFechaValida(fepre)) {
+							printf("\nError: Fecha prevista de devolucion invalida.\n\n");
+							while (getchar() != '\n');
+							break;
+						}
+						if (compararFechas(feini, fepre) > 0) {
+							printf("\nError: La fecha prevista de devolucion no puede ser anterior a la fecha inicial.\n\n");
+							break;
+						}
+
+						// Cantidad de dias automatica a partir de las fechas
+						int days = diasEntreFechas(feini, fepre);
+						if (days <= 0) {
+							days = 1; // Si retira y devuelve el mismo dia se cuenta como al menos 1 jornada
+						}
+
+						// La fecha real de devolucion queda pendiente hasta el momento de la devolucion
+						struct fechas fereal = {0, 0, 0};
+
+						// 4. Calcular precio automaticamente en base a la tarifa del vehiculo y los dias
+						float costot = days * vVeh.precioPorDia;
+						printf("\nDuracion calculada:       %d dia(s)\n", days);
+						printf("Costo total del alquiler: $%.2f (%d dias x $%.2f/dia)\n\n", costot, days, vVeh.precioPorDia);
+
+						// 5. Monto inicial que abona el cliente (opcional: total, parcial o $0)
+						float costpag = 0.0f;
+						printf("Ingrese el monto abonado por el cliente al retirar (0 a $%.2f): $", costot);
+						if (scanf("%f", &costpag) != 1 || costpag < 0 || costpag > costot + 0.01f) {
+							printf("Monto invalido o superior al total pactado. Se establece en $0.00.\n");
+							costpag = 0.0f;
+							while (getchar() != '\n');
+						}
+
+						int state = 1; // 1: Activo
+
+						// 6. Resumen y confirmacion
+						printf("\n-------------------- Resumen del Alquiler --------------------\n");
+						printf("Numero de alquiler:           %d (Asignado automaticamente)\n", numal);
+						printf("Cliente:                      %s %s (DNI: %d)\n", cCli.nombre, cCli.apellido, dnicli);
+						printf("Vehiculo:                     %s %s (Patente: %s)\n", vVeh.marca, vVeh.modelo, patent);
+						printf("Fecha de inicio:              %02d/%02d/%04d\n", feini.dia, feini.mes, feini.anio);
+						printf("Fecha prevista devolucion:    %02d/%02d/%04d\n", fepre.dia, fepre.mes, fepre.anio);
+						printf("Fecha devolucion real:        Pendiente (al registrar la devolucion)\n");
+						printf("Duracion:                     %d dia(s)\n", days);
+						printf("Tarifa por dia:               $%.2f\n", vVeh.precioPorDia);
+						printf("Costo total:                  $%.2f\n", costot);
+						printf("Monto abonado al retirar:     $%.2f\n", costpag);
+						printf("Saldo pendiente:              $%.2f\n", costot - costpag);
+						printf("Estado inicial:               1 (Activo)\n");
+						printf("--------------------------------------------------------------\n");
+
+						printf("\nÂ¿Desea confirmar el registro del alquiler? [Y/N]: ");
+						scanf(" %c", &quehacer2);
+						if (quehacer2 == 'y' || quehacer2 == 'Y' || quehacer2 == 's' || quehacer2 == 'S') {
 							registrarAlquiler(numal, dnicli, patent, feini, fepre, fereal, days, costot, costpag, state);
-							
-						}else{
-							printf("\nOperacion cancelada por el usuario\n");
+						} else {
+							printf("\nOperacion cancelada por el usuario.\n\n");
 						}
 						break;
+					}
 					case 2:{
 						//se modifica un alquiler
 						int opermod, numalquiler;
@@ -568,7 +634,7 @@ int main(void) {
 						printf("\nEstado:                           %d\n", al.estado);
 						printf("\n-----------------------------------------------\n");
 						char decision;
-						printf("\n¿Desea confirmar la modificacion? (Y/N):      \t");
+						printf("\nï¿½Desea confirmar la modificacion? (Y/N):      \t");
 						scanf(" %c", &decision);
 						if((decision == 'Y') || (decision == 'y') || (decision == 'S') || (decision == 's')){
 							modificarAlquiler(al.numAlq, al.dniCliente, al.patVehiculo, al.fechaInicio, al.fechaPreDevolucion, al.fechaRealDevolucion, al.dias, al.costoTotal, al.totalPagado, al.estado);
@@ -578,45 +644,412 @@ int main(void) {
 						}
 						break;
 					}
-				break;
+					case 3: { // Listar alquileres
+						listarAlquileres();
+						break;
+					}
+					case 0:
+						break;
+					default:
+						printf("\nOpcion invalida.\n\n");
+						break;
 				}
-			}
-			}
-			case 4: //Devoluciones
-				
 				break;
-			case 5: //Pagos
-				
-				break;
-			case 6: //Consultas y reportes
-				fflush(stdin);
-				printf("Ingrese su patente: ");
-                scanf("%s", patente);
-				if(esPatente(patente)){
-				printf("patente valida\n");
-				if (existeVeh(patente)){
-					printf("Existe ya esta patente registrada");
-				}else{
-				printf("No existe esta patente en el registro");
-					
+			}
+			case 4: { // Devoluciones
+				int criterioDev = 0;
+				printf("\n================ REGISTRAR DEVOLUCION ================\n");
+				printf("Buscar alquiler activo por:\n");
+				printf("1. Numero de alquiler\n");
+				printf("2. Patente del vehiculo\n");
+				printf("0. Volver\n");
+				printf("Seleccione una opcion: ");
+				if (scanf("%d", &criterioDev) != 1 || criterioDev == 0) {
+					while (getchar() != '\n');
+					break;
 				}
-				}else{
-					printf("patente invalida\n");
-				}	
-                
+
+				struct alquileres alDev = {0};
+				int encontradoDev = 0;
+
+				if (criterioDev == 1) {
+					int numAlqDev;
+					printf("Ingrese el numero de alquiler: ");
+					if (scanf("%d", &numAlqDev) == 1) {
+						if (existeAlquiler(numAlqDev)) {
+							obtenerAlquiler(numAlqDev, &alDev);
+							if (alDev.estado == 1) {
+								encontradoDev = 1;
+							} else {
+								printf("\nEl alquiler Nro %d no esta activo (Estado actual: %d).\n\n", numAlqDev, alDev.estado);
+							}
+						} else {
+							printf("\nEl alquiler Nro %d no existe.\n\n", numAlqDev);
+						}
+					} else {
+						while (getchar() != '\n');
+						printf("\nNumero invalido.\n\n");
+					}
+				} else if (criterioDev == 2) {
+					char patDev[10];
+					printf("Ingrese la patente del vehiculo: ");
+					scanf(" %s", patDev);
+					if (buscarAlquilerActivoPorVehiculo(patDev, &alDev)) {
+						encontradoDev = 1;
+					} else {
+						printf("\nNo se encontro ningun alquiler activo con la patente %s.\n\n", patDev);
+					}
+				}
+
+				if (encontradoDev) {
+					struct cliente cDev;
+					obtenerCliente(alDev.dniCliente, &cDev);
+					struct vehiculo vDev;
+					obtenerVehiculo(alDev.patVehiculo, &vDev);
+
+					printf("\n--- Datos del Alquiler Activo ---\n");
+					printf("Numero de alquiler:       %d\n", alDev.numAlq);
+					printf("Cliente:                  %s %s (DNI: %d)\n", cDev.nombre, cDev.apellido, alDev.dniCliente);
+					printf("Vehiculo:                 %s %s (Patente: %s)\n", vDev.marca, vDev.modelo, alDev.patVehiculo);
+					printf("Km actuales registrados:  %d\n", vDev.kmactual);
+					printf("Fecha de inicio:          %02d/%02d/%04d\n", alDev.fechaInicio.dia, alDev.fechaInicio.mes, alDev.fechaInicio.anio);
+					printf("Fecha prevista dev.:      %02d/%02d/%04d\n", alDev.fechaPreDevolucion.dia, alDev.fechaPreDevolucion.mes, alDev.fechaPreDevolucion.anio);
+					printf("Dias contratados:         %d dias\n", alDev.dias);
+					printf("Costo inicial pactado:    $%.2f\n", alDev.costoTotal);
+					printf("Total abonado hasta hoy:  $%.2f\n", alDev.totalPagado);
+					printf("----------------------------------\n");
+
+					struct fechas fReal;
+					printf("\nIngrese la fecha real de devolucion (dia mes anio separados por espacio): ");
+					if (scanf("%d %d %d", &fReal.dia, &fReal.mes, &fReal.anio) != 3 || !esFechaValida(fReal)) {
+						printf("\nError: Fecha invalida.\n\n");
+						while (getchar() != '\n');
+						break;
+					}
+
+					if (compararFechas(fReal, alDev.fechaInicio) < 0) {
+						printf("\nError: La fecha de devolucion no puede ser anterior a la fecha de inicio.\n\n");
+						break;
+					}
+
+					int kmDevolucion = vDev.kmactual;
+					printf("Ingrese el kilometraje final del vehiculo: ");
+					if (scanf("%d", &kmDevolucion) != 1 || kmDevolucion < vDev.kmactual) {
+						printf("Aviso: Kilometraje no valido o menor al anterior. Se conserva %d km.\n", vDev.kmactual);
+						kmDevolucion = vDev.kmactual;
+					}
+
+					int diasReales = diasEntreFechas(alDev.fechaInicio, fReal);
+					if (diasReales < 1) diasReales = 1;
+
+					float costoFinal = alDev.costoTotal;
+					if (diasReales > alDev.dias) {
+						int diasExtra = diasReales - alDev.dias;
+						float recargo = diasExtra * vDev.precioPorDia;
+						costoFinal += recargo;
+						printf("\n>>> ENTREGA CON DEMORA: %d dias de retraso. Recargo: $%.2f. <<<\n", diasExtra, recargo);
+					}
+
+					float saldoPendiente = costoFinal - alDev.totalPagado;
+					if (saldoPendiente < 0) saldoPendiente = 0;
+
+					printf("\n--- Liquidacion Final ---\n");
+					printf("Costo total final:  $%.2f\n", costoFinal);
+					printf("Total ya abonado:   $%.2f\n", alDev.totalPagado);
+					printf("Saldo pendiente:    $%.2f\n", saldoPendiente);
+					printf("-------------------------\n");
+
+					float pagoDev = 0;
+					struct fechas fPago = fReal;
+					if (saldoPendiente > 0.001f) {
+						char deseaPagar;
+						printf("Â¿Desea registrar el pago total o parcial ahora mismo [Y/N]? ");
+						scanf(" %c", &deseaPagar);
+						if (deseaPagar == 'Y' || deseaPagar == 'y' || deseaPagar == 'S' || deseaPagar == 's') {
+							printf("Ingrese el monto a abonar (Saldo pendiente: $%.2f): ", saldoPendiente);
+							if (scanf("%f", &pagoDev) != 1 || pagoDev <= 0 || pagoDev > saldoPendiente + 0.01f) {
+								printf("Monto invalido o superior al saldo. No se registrara pago en este paso.\n");
+								pagoDev = 0;
+							}
+						}
+					}
+
+					char confDev;
+					printf("\nÂ¿Confirmar devolucion del vehiculo [Y/N]? ");
+					scanf(" %c", &confDev);
+					if (confDev == 'Y' || confDev == 'y' || confDev == 'S' || confDev == 's') {
+						if (registrarDevolucion(alDev.numAlq, fReal, kmDevolucion, pagoDev, fPago) == 0) {
+							printf("\nVehiculo devuelto con exito. Estado del vehiculo actualizado a DISPONIBLE.\n");
+							if (saldoPendiente - pagoDev > 0.001f) {
+								printf("NOTA: El cliente aun adeuda $%.2f (puede abonarlo en el menu de Pagos).\n\n", saldoPendiente - pagoDev);
+							} else {
+								printf("El alquiler ha quedado 100%% saldado.\n\n");
+							}
+						} else {
+							printf("\nError al registrar la devolucion.\n\n");
+						}
+					} else {
+						printf("\nDevolucion cancelada por el usuario.\n\n");
+					}
+				}
 				break;
-			case 0: //Salir
-				
+			}
+			case 5: { // Pagos
+				int opcPagos = 0;
+				printf("\n================ GESTION DE PAGOS ================\n");
+				printf("1. Registrar pago de un alquiler\n");
+				printf("2. Consultar historial de movimientos/pagos de un cliente\n");
+				printf("3. Listar todos los movimientos registrados\n");
+				printf("0. Volver\n");
+				printf("Seleccione una opcion: ");
+				if (scanf("%d", &opcPagos) != 1 || opcPagos == 0) {
+					while (getchar() != '\n');
+					break;
+				}
+
+				if (opcPagos == 1) {
+					int numAlqPago;
+					printf("\nIngrese el numero de alquiler a pagar: ");
+					if (scanf("%d", &numAlqPago) != 1) {
+						printf("\nError: Debe ingresar un numero valido.\n\n");
+						while (getchar() != '\n');
+						break;
+					}
+					if (!existeAlquiler(numAlqPago)) {
+						printf("\nEl alquiler Nro %d no existe.\n\n", numAlqPago);
+						break;
+					}
+
+					struct alquileres alPago;
+					obtenerAlquiler(numAlqPago, &alPago);
+					float saldo = alPago.costoTotal - alPago.totalPagado;
+
+					struct cliente cPago;
+					obtenerCliente(alPago.dniCliente, &cPago);
+
+					printf("\n--- Detalle del Alquiler Nro %d ---\n", alPago.numAlq);
+					printf("Cliente:            %s %s (DNI: %d)\n", cPago.nombre, cPago.apellido, alPago.dniCliente);
+					printf("Vehiculo:           %s\n", alPago.patVehiculo);
+					printf("Estado alquiler:    %s\n", (alPago.estado == 1) ? "Activo" : (alPago.estado == 2) ? "Finalizado" : "Cancelado");
+					printf("Costo total:        $%.2f\n", alPago.costoTotal);
+					printf("Total abonado:      $%.2f\n", alPago.totalPagado);
+					printf("Saldo pendiente:    $%.2f\n", saldo);
+					printf("----------------------------------\n");
+
+					if (saldo <= 0.001f) {
+						printf("\nEste alquiler ya se encuentra totalmente saldado.\n\n");
+						break;
+					}
+
+					float montoAbonar;
+					printf("Ingrese el monto a abonar (Maximo $%.2f): ", saldo);
+					if (scanf("%f", &montoAbonar) != 1 || montoAbonar <= 0 || montoAbonar > saldo + 0.01f) {
+						printf("\nError: Monto invalido o superior al saldo adeudado.\n\n");
+						while (getchar() != '\n');
+						break;
+					}
+
+					struct fechas fPago;
+					printf("Ingrese la fecha del pago (dia mes anio separados por espacio): ");
+					if (scanf("%d %d %d", &fPago.dia, &fPago.mes, &fPago.anio) != 3 || !esFechaValida(fPago)) {
+						printf("\nError: Fecha invalida.\n\n");
+						while (getchar() != '\n');
+						break;
+					}
+
+					char confPago;
+					printf("Confirma registrar el pago de $%.2f [Y/N]? ", montoAbonar);
+					scanf(" %c", &confPago);
+					if (confPago == 'Y' || confPago == 'y' || confPago == 'S' || confPago == 's') {
+						registrarPagoAlquiler(alPago.numAlq, montoAbonar, fPago);
+					} else {
+						printf("\nPago cancelado por el usuario.\n\n");
+					}
+				} else if (opcPagos == 2) {
+					int dniHist;
+					printf("\nIngrese el DNI del cliente para ver su historial: ");
+					if (scanf("%d", &dniHist) == 1 && esDNI(dniHist)) {
+						listarMovimientosCliente(dniHist);
+					} else {
+						printf("\nDNI invalido.\n\n");
+						while (getchar() != '\n');
+					}
+				} else if (opcPagos == 3) {
+					listarTodosMovimientos();
+				}
+				break;
+			}
+			case 6: { // Consultas y reportes
+				int opcRep = 0;
+				do {
+					printf("\n======================= MENU DE CONSULTAS Y REPORTES =======================\n");
+					printf("1.  Vehiculos disponibles\n");
+					printf("2.  Vehiculos alquilados actualmente (con detalle del alquiler)\n");
+					printf("3.  Alquileres por rango de fechas de inicio\n");
+					printf("4.  Alquileres por cliente (DNI)\n");
+					printf("5.  Alquileres por vehiculo (Patente)\n");
+					printf("6.  Alquileres por estado (Activos / Finalizados / Cancelados)\n");
+					printf("7.  Alquileres por importe (Mayores o menores a un valor)\n");
+					printf("8.  Pagos realizados en un periodo determinado\n");
+					printf("9.  Clientes con deuda pendiente\n");
+					printf("10. Estadisticas generales de la empresa\n");
+					printf("11. Exportar todos los reportes a archivos de texto (.txt)\n");
+					printf("0.  Volver al menu principal\n");
+					printf("Seleccione una opcion: ");
+
+					if (scanf("%d", &opcRep) != 1) {
+						while (getchar() != '\n');
+						printf("\nOpcion invalida.\n\n");
+						continue;
+					}
+
+					switch (opcRep) {
+						case 1: {
+							listarVehiculosDisponibles();
+							break;
+						}
+						case 2: {
+							listarVehiculosAlquiladosDetalle();
+							break;
+						}
+						case 3: {
+							struct fechas fDesde, fHasta;
+							printf("\nIngrese fecha inicial (dia mes anio separados por espacio): ");
+							if (scanf("%d %d %d", &fDesde.dia, &fDesde.mes, &fDesde.anio) != 3 || !esFechaValida(fDesde)) {
+								printf("\nError: Fecha inicial invalida.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							printf("Ingrese fecha final (dia mes anio separados por espacio): ");
+							if (scanf("%d %d %d", &fHasta.dia, &fHasta.mes, &fHasta.anio) != 3 || !esFechaValida(fHasta)) {
+								printf("\nError: Fecha final invalida.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							if (compararFechas(fDesde, fHasta) > 0) {
+								printf("\nError: La fecha inicial no puede ser posterior a la fecha final.\n\n");
+								break;
+							}
+							listarAlquileresPorRangoFechas(fDesde, fHasta);
+							break;
+						}
+						case 4: {
+							int dniCli;
+							printf("\nIngrese el DNI del cliente: ");
+							if (scanf("%d", &dniCli) != 1 || !esDNI(dniCli)) {
+								printf("\nError: DNI invalido.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							listarAlquileresPorCliente(dniCli);
+							break;
+						}
+						case 5: {
+							char pat[10];
+							printf("\nIngrese la patente del vehiculo: ");
+							scanf(" %s", pat);
+							listarAlquileresPorVehiculo(pat);
+							break;
+						}
+						case 6: {
+							int est = 0;
+							printf("\nSeleccione estado a consultar:\n");
+							printf("1. Activos\n");
+							printf("2. Finalizados\n");
+							printf("0. Cancelados\n");
+							printf("Opcion: ");
+							if (scanf("%d", &est) != 1 || (est != 0 && est != 1 && est != 2)) {
+								printf("\nEstado invalido.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							listarAlquileresPorEstado(est);
+							break;
+						}
+						case 7: {
+							int crit = 0;
+							float val = 0;
+							printf("\nSeleccione criterio:\n");
+							printf("1. Alquileres con importe MAYOR a un valor\n");
+							printf("2. Alquileres con importe MENOR a un valor\n");
+							printf("Opcion: ");
+							if (scanf("%d", &crit) != 1 || (crit != 1 && crit != 2)) {
+								printf("\nCriterio invalido.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							printf("Ingrese el valor del importe: $");
+							if (scanf("%f", &val) != 1 || val < 0) {
+								printf("\nImporte invalido.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							listarAlquileresPorImporte(val, crit);
+							break;
+						}
+						case 8: {
+							struct fechas fDesde, fHasta;
+							printf("\nIngrese fecha inicial del periodo (dia mes anio separados por espacio): ");
+							if (scanf("%d %d %d", &fDesde.dia, &fDesde.mes, &fDesde.anio) != 3 || !esFechaValida(fDesde)) {
+								printf("\nError: Fecha inicial invalida.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							printf("Ingrese fecha final del periodo (dia mes anio separados por espacio): ");
+							if (scanf("%d %d %d", &fHasta.dia, &fHasta.mes, &fHasta.anio) != 3 || !esFechaValida(fHasta)) {
+								printf("\nError: Fecha final invalida.\n\n");
+								while (getchar() != '\n');
+								break;
+							}
+							if (compararFechas(fDesde, fHasta) > 0) {
+								printf("\nError: La fecha inicial no puede ser posterior a la fecha final.\n\n");
+								break;
+							}
+							listarPagosPorPeriodo(fDesde, fHasta);
+							break;
+						}
+						case 9: {
+							listarClientesConDeuda();
+							break;
+						}
+						case 10: {
+							generarEstadisticasEmpresa();
+							break;
+						}
+						case 11: {
+							printf("\nExportando todos los reportes a disco...\n");
+							exportarClientesTxt();
+							exportarVehiculosTxt();
+							exportarAlquileresTxt();
+							exportarMovimientosTxt();
+							printf("Todos los reportes .txt fueron generados exitosamente.\n\n");
+							break;
+						}
+						case 0:
+							break;
+						default:
+							printf("\nOpcion no reconocida.\n\n");
+							break;
+					}
+
+					if (opcRep != 0) {
+						system("pause");
+					}
+				} while (opcRep != 0);
+
+				break;
+			}
+			case 0: // Salir
+				printf("\nSaliendo del sistema...\n\n");
 				break;
 			default:
-				printf("Opcion invalida\n");
-                opcion = -1;
+				printf("\nOpcion invalida.\n\n");
+				opcion = -1;
 		}
 		fflush(stdin);
-		system("pause"); // Muestra "Presione una tecla para continuar . . ."
-		
-	}while(opcion!=0);
-	
-	
+		system("pause");
+
+	} while (opcion != 0);
+
 	return 0;
 }

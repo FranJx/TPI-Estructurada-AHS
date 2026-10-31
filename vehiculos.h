@@ -14,5 +14,6 @@ int eliminarVehiculo(char *patente);
 void listarVehiculos(void);
 int exportarVehiculosTxt(void);
 int estaDisponible(char *patente);
+void listarVehiculosDisponibles(void);
 
 #endif // VEHICULOS_H

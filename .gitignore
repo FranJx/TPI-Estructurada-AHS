@@ -23,4 +23,5 @@
 # Archivos de datos y reportes generados
 *.dat
 reporte_*.txt
+movimientos_*.txt
 Makefile.win

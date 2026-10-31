@@ -174,29 +174,26 @@ int modificarVehiculo(char *patente, char *marca, char *modelo, int anio, int ti
 }
 
 int eliminarVehiculo(char *patente) {
-	FILE *arch_vehiculos;
-	struct vehiculo v;
-	int encontrado= 0;
-	arch_vehiculos = fopen("vehiculos.dat", "r+b");
-	if(arch_vehiculos != NULL){
-		while((fread(&v, sizeof(struct vehiculo), 1, arch_vehiculos)) == 1){
-			if(v.patVehiculo == patente){
-				encontrado = 1;
-				v.estado = 0;
-				fseek(arch_vehiculos, -sizeof(struct vehiculo), SEEK_CUR);
-				fwrite(&v, sizeof(struct vehiculo), 1, arch_vehiculos);
-				printf("\nVehiculo eliminado con exito\n");
-				fclose(arch_vehiculos);
-			}
-		}
-		if(encontrado != 1){
-			printf("\nError, vehiculo no encontrado\n");
-		}
-	}else{
-		printf("\nError en la apertura del archivo de vehiculos\n");
+	if (patente == NULL) return 1;
+	FILE *arch_vehiculos = fopen("vehiculos.dat", "r+b");
+	if (arch_vehiculos == NULL) {
+		printf("\nError al abrir el archivo vehiculos.dat\n");
+		return 1;
 	}
+
+	struct vehiculo v;
+	while (fread(&v, sizeof(struct vehiculo), 1, arch_vehiculos) == 1) {
+		if (strcmp(v.patVehiculo, patente) == 0) {
+			v.estado = 0; // Baja logica
+			fseek(arch_vehiculos, -(long)sizeof(struct vehiculo), SEEK_CUR);
+			fwrite(&v, sizeof(struct vehiculo), 1, arch_vehiculos);
+			fclose(arch_vehiculos);
+			return 0; // Exito
+		}
+	}
+
 	fclose(arch_vehiculos);
-    return 1;
+	return 1; // No encontrado
 }
 int estaDisponible(char *patent){
 	FILE *arch_vehiculos;
@@ -357,3 +354,28 @@ void listarVehiculos(void) {
     printf("\n");
 }
 
+
+void listarVehiculosDisponibles(void) {
+    FILE *AVeh = fopen("vehiculos.dat", "rb");
+    if (AVeh == NULL) {
+        printf("\nNo se pudo abrir 'vehiculos.dat' o no hay vehiculos cargados.\n\n");
+        return;
+    }
+
+    struct vehiculo v;
+    int contador = 0;
+
+    printf("\n============================= VEHICULOS DISPONIBLES =============================\n");
+    imprimirEncabezadoVehiculos(stdout);
+
+    while (fread(&v, sizeof(struct vehiculo), 1, AVeh) == 1) {
+        if (v.estado == 1) { // 1: Disponible
+            imprimirFilaVehiculo(stdout, v);
+            contador++;
+        }
+    }
+
+    imprimirSeparadorVehiculos(stdout);
+    printf("Total de vehiculos actualmente disponibles: %d\n\n", contador);
+    fclose(AVeh);
+}
